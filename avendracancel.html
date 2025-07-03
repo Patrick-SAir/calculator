@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avendra Early Termination Fee Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f7f8fa;
+      color: #333;
+      margin: 2rem;
+    }
+    .card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 1.5rem;
+      max-height: 80px;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #666;
+      text-align: center;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 300px;
+      background-color: #f7f7f7;
+      color: #333;
+      text-align: center;
+      border-radius: 4px;
+      padding: 0.75rem;
+      position: absolute;
+      z-index: 1;
+      top: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-size: 0.75rem;
+      line-height: 1.25;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .auto-input label,
+    .manual-input label {
+      font-size: 0.85rem;
+    }
+    input[type="number"],
+    select {
+      padding: 0.3rem;
+      width: 4rem;
+      margin-left: 0.5rem;
+      margin-right: 1rem;
+    }
+    input[type="date"] {
+      padding: 0.3rem;
+      width: 12rem;
+      margin-left: 0.5rem;
+      margin-right: 1rem;
+    }
+    .equipment-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+      gap: 0.5rem;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .equipment-row label {
+      font-weight: 400;
+      font-size: 0.9rem;
+      flex: 1;
+      margin: 0;
+    }
+    .equipment-row input {
+      width: 4rem;
+      flex-shrink: 0;
+    }
+    .equipment-header {
+      display: flex;
+      justify-content: space-between;
+      max-width: 400px;
+      margin: 2rem auto 0.5rem;
+    }
+    .equipment-header span {
+      flex: 1;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .btn {
+      background-color: #0071BC;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: block;
+      margin: 1rem auto 0;
+    }
+    .result {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #cc0000;
+    }
+    .calculation-details {
+      font-size: 0.95rem;
+      color: #333;
+      margin-top: 1rem;
+    }
+    .calculation-details ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      text-align: left;
+    }
+    .calculation-details li {
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .calculation-details strong {
+      font-weight: 700;
+    }
+    .inline-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="https://www.rtkane.com/upload/SALogo.png" alt="ScentAir Logo" class="logo" />
+    <h1>Avendra Early Termination Fee Calculator</h1>
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+      <div class="tooltip">
+        Current Starting Residual Values
+        <div class="tooltiptext">
+          ScentSplash: $157.92<br>
+          ScentWave: $390.24<br>
+          Whisper MAX I: $365.76<br>
+          Whisper MAX II: $484.32<br>
+          ScentBreeze: $390.24<br>
+          ScentDirect AMP: $444.96<br>
+          ScentDirect Full Service: $711.84<br>
+          ScentDirect Tower AMP: $677.28<br>
+          ScentDirect Tower Full Service: $864.96<br>
+          ScentStream (single): $1,305.12<br>
+          ScentStream (dual): $2,046.72<br>
+          Ion Pure: $360.00<br>
+          Ion Defend: $408.00<br>
+          Ion Target: $504.00<br>
+          Ion Elevate: $504.00<br>
+          DFS Compact: $336.00<br>
+          DFS Ultrafine: $576.00
+        </div>
+      </div>
+    </div>
+
+    <div class="inline-group">
+      <label><input type="radio" name="inputMode" value="manual" checked onchange="toggleInputMode()" /> Enter Manually</label>
+      <label><input type="radio" name="inputMode" value="auto" onchange="toggleInputMode()" /> Use Start Date & Term</label>
+    </div>
+
+    <div class="inline-group manual-input" id="manualInput">
+      <label for="monthsRemaining">Months Remaining:</label>
+      <input type="number" id="monthsRemaining" min="0" />
+      <label for="manualContractTerm">Contract Term:</label>
+      <select id="manualContractTerm">
+        <option value="">Select</option>
+        <option value="12">12 Months</option>
+        <option value="24">24 Months</option>
+        <option value="36">36 Months</option>
+      </select>
+    </div>
+
+    <div class="inline-group hidden auto-input" id="autoInput">
+      <label for="startDate">Start Date:</label>
+      <input type="date" id="startDate" />
+      <label for="cancelDate">Cancellation Date:</label>
+      <input type="date" id="cancelDate" />
+      <label for="contractTerm">Contract Term:</label>
+      <select id="contractTerm">
+        <option value="">Select</option>
+        <option value="12">12 Months</option>
+        <option value="24">24 Months</option>
+        <option value="36">36 Months</option>
+      </select>
+    </div>
+
+    <div class="equipment-header">
+      <span>Products on Contract</span>
+      <span>Quantity</span>
+    </div>
+    <div id="equipmentContainer"></div>
+
+    <button class="btn" onclick="calculate()">Calculate</button>
+    <div class="result" id="result"></div>
+    <div class="calculation-details" id="calcDetails"></div>
+  </div>
+
+  <script>
+    const equipmentOptions = {
+      "ScentSplash": 157.92,
+      "ScentWave": 390.24,
+      "Whisper MAX - Level I": 365.76,
+      "Whisper MAX - Level II": 484.32,
+      "ScentBreeze": 390.24,
+      "ScentDirect AMP": 444.96,
+      "ScentDirect Full Service": 711.84,
+      "ScentDirect Tower AMP": 677.28,
+      "ScentDirect Tower Full Service": 864.96,
+      "ScentStream (single)": 1305.12,
+      "ScentStream (dual)": 2046.72,
+      "Ion Pure": 360.00,
+      "Ion Defend": 408.00,
+      "Ion Target": 504.00,
+      "Ion Elevate": 504.00,
+      "DFS Compact": 336.00,
+      "DFS Ultrafine": 576.00
+    };
+
+    function toggleInputMode() {
+      const mode = document.querySelector('input[name="inputMode"]:checked').value;
+      document.getElementById('manualInput').classList.toggle('hidden', mode !== 'manual');
+      document.getElementById('autoInput').classList.toggle('hidden', mode !== 'auto');
+    }
+
+    function calculateMonthsRemaining(startDate, cancelDate, termMonths) {
+      const start = new Date(startDate);
+      const cancel = new Date(cancelDate);
+      const monthsPassed = (cancel.getFullYear() - start.getFullYear()) * 12 + (cancel.getMonth() - start.getMonth());
+      return Math.max(0, termMonths - monthsPassed);
+    }
+
+    function formatCurrency(value) {
+      return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    }
+
+    function populateEquipmentInputs() {
+      const container = document.getElementById('equipmentContainer');
+      for (const [name, value] of Object.entries(equipmentOptions)) {
+        const row = document.createElement('div');
+        row.className = 'equipment-row';
+
+        const label = document.createElement('label');
+        label.textContent = name;
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.max = '100';
+        input.value = '0';
+        input.setAttribute('data-equipment', name);
+
+        row.appendChild(label);
+        row.appendChild(input);
+        container.appendChild(row);
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('cancelDate').value = today;
+    }
+
+    function calculate() {
+      const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
+      let monthsRemaining, termMonths;
+      let errors = [];
+
+      if (inputMode === 'manual') {
+        monthsRemaining = parseInt(document.getElementById('monthsRemaining').value);
+        termMonths = parseInt(document.getElementById('manualContractTerm').value);
+        if (isNaN(monthsRemaining) || monthsRemaining < 0) {
+          errors.push('Please enter a valid number of months remaining.');
+        }
+        if (isNaN(termMonths)) {
+          errors.push('Please select a valid contract term.');
+        }
+        if (!isNaN(monthsRemaining) && !isNaN(termMonths) && monthsRemaining >= termMonths) {
+          errors.push('Months remaining cannot be equal to or exceed the contract term.');
+        }
+      } else {
+        const startDate = document.getElementById('startDate').value;
+        const cancelDate = document.getElementById('cancelDate').value;
+        termMonths = parseInt(document.getElementById('contractTerm').value);
+        if (!startDate) {
+          errors.push('Please enter a valid contract start date.');
+        }
+        if (!cancelDate) {
+          errors.push('Please enter a cancellation date.');
+        }
+        if (isNaN(termMonths)) {
+          errors.push('Please select a valid contract term.');
+        }
+        if (!errors.length) {
+          monthsRemaining = calculateMonthsRemaining(startDate, cancelDate, termMonths);
+        }
+      }
+
+      let equipmentCount = 0;
+      const inputs = document.querySelectorAll('input[data-equipment]');
+      for (const input of inputs) {
+        const qty = parseInt(input.value);
+        if (!isNaN(qty)) {
+          if (qty < 0 || qty > 100) {
+            errors.push('Equipment quantities must be between 0 and 100.');
+            break;
+          }
+          if (qty > 0) equipmentCount++;
+        }
+      }
+
+      if (equipmentCount === 0) {
+        errors.push('Please enter quantity for at least one piece of equipment.');
+      }
+
+      if (errors.length) {
+        document.getElementById('result').innerHTML = `<ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
+        document.getElementById('calcDetails').innerHTML = '';
+        return;
+      }
+
+      let total = 0;
+      let breakdown = [];
+      for (const input of inputs) {
+        const name = input.getAttribute('data-equipment');
+        const qty = parseInt(input.value);
+        if (!isNaN(qty) && qty > 0) {
+          const value = equipmentOptions[name];
+          const monthly = value / termMonths;
+          const lineTotal = qty * monthsRemaining * monthly;
+          total += lineTotal;
+          breakdown.push(
+            `${monthsRemaining} months remaining × ${qty} pieces of equipment × (${formatCurrency(value)} residual value ÷ ${termMonths} months term) = <strong>${formatCurrency(lineTotal)}</strong> early termination fee for <strong>${name}</strong>`
+          );
+        }
+      }
+
+      document.getElementById('result').textContent = `Total Early Termination Fee: ${formatCurrency(total)}`;
+      document.getElementById('calcDetails').innerHTML = `<ul><li>${breakdown.join('</li><li>')}</li></ul>`;
+    }
+
+    window.onload = populateEquipmentInputs;
+  </script>
+</body>
+</html>
